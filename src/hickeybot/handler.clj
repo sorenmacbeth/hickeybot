@@ -5,10 +5,11 @@
             [compojure.handler :as handler]
             [ring.adapter.jetty :as jetty]
             [clj-http.client :as client]
-            [jackknife.core :refer (with-timeout)])
+            [jackknife.core :refer (with-timeout)]
+            [environ.core :refer (env)])
   (:gen-class))
 
-(def INCOMING-WEBHOOK "https://yieldbot.slack.com/services/hooks/incoming-webhook?token=ugV229Hlek4eJLKpcd2UZLbq")
+(def INCOMING-WEBHOOK (env :incoming-webhook))
 (def NS-PUBLICS (ns-publics 'clojure.core))
 
 (defn doc! [text]

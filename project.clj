@@ -8,6 +8,7 @@
                  [compojure "1.1.6"]
                  [ring/ring "1.2.2"]
                  [clj-http "0.9.2"]
-                 [jackknife "0.1.7"]]
+                 [jackknife "0.1.7"]
+                 [environ "0.5.0"]]
   :profiles {:uberjar {:aot :all}}
   :main hickeybot.handler)
