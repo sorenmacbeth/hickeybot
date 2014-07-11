@@ -6,11 +6,20 @@
             [ring.adapter.jetty :as jetty]
             [clj-http.client :as client]
             [jackknife.core :refer (with-timeout)]
-            [environ.core :refer (env)])
+            [environ.core :refer (env)]
+            [clojure.repl :refer (doc source)])
   (:gen-class))
 
 (def INCOMING-WEBHOOK (env :incoming-webhook))
 (def NS-PUBLICS (ns-publics 'clojure.core))
+
+(defmacro with-out-str-and-ret [& body]
+  (let [body (cons '(use 'clojure.repl) body)]
+    `(let [s# (new java.io.StringWriter)
+          ret# (binding [*out* s#]
+                 ~@body)]
+       (str s# (when-not (nil? ret#)
+                 (str "\n" (pr-str ret#)))))))
 
 (defn doc! [text]
   (when text
@@ -27,10 +36,10 @@
   [text]
   (when text
     (let [res (with-timeout [(* 1000 60)]
-                (load-string text))]
+                (with-out-str-and-ret (load-string text)))]
       (client/post INCOMING-WEBHOOK
                    {:form-params
-                    {:text (str "```hickeybot> " text "\n" (pr-str res) "```")}
+                    {:text (str "```hickeybot> " text "\n" res "```")}
                     :content-type :json}))
     {:status 200}))
 
